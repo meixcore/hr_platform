@@ -1,0 +1,10 @@
+from rest_framework import viewsets
+from .models import Resume
+from .serializers import ResumeSerializer
+
+class ResumeViewSet(viewsets.ModelViewSet):
+    queryset = Resume.objects.all()
+    serializer_class = ResumeSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
