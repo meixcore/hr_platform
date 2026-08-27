@@ -9,7 +9,7 @@ class ResumeViewSet(viewsets.ModelViewSet):
     permission_classes = [ResumePermission]
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name="candidate").exists():
+        if self.request.user.role.name == 'candidate':
             return Resume.objects.filter(user=self.request.user)
         return Resume.objects.all()
 

@@ -1,17 +1,30 @@
+from django.contrib.auth.models import Permission
 from rest_framework import serializers
-from .models import User
+from .models import User, Role
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
         model = User
-        fields = ["username", "password", "role"]
+        fields = ["username", "password"]
 
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
-            role=validated_data['role']
         )
+
+        role, created = Role.objects.get_or_create(name=validated_data['candidate'])
+
+        if created:
+            role.description = 'Candidate can CRUD resume'
+            role.save()
+            view_resume = Permission.objects.get(codename='view_resume')
+            add_resume = Permission.objects.get(codename='add_resume')
+            delete_resume = Permission.objects.get(codename='delete_resume')
+            change_resume = Permission.objects.get(codename='change_resume')
+            role.permissions.set([view_resume, add_resume, delete_resume, change_resume])
+        user.role = role
+        user.save()
         return user

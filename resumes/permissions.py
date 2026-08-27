@@ -7,13 +7,15 @@ class ResumePermission(BasePermission):
         if not user.is_authenticated:
             return False
 
+        role_perms = user.role.permisssions.values_list('codename', flat=True)
+
         if request.method in SAFE_METHODS:
-            return user.has_perm("resumes.view_resume")
+            return "view_resume" in role_perms
         elif request.method == 'POST':
-            return user.has_perm("resumes.add_resume")
+            return "add_resume" in role_perms
         elif request.method in ('PUT', 'PATCH'):
-            return user.has_perm("resumes.change_resume")
+            return "change_resume" in role_perms
         elif request.method == 'DELETE':
-            return user.has_perm("resumes.delete_resume")
+            return "delete_resume" in role_perms
 
         return False
