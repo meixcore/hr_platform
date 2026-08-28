@@ -14,3 +14,7 @@ media/
 
 .DS_Store
 Thumbs.db
+
+data/
+
+entrypoint.sh
