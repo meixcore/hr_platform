@@ -7,7 +7,7 @@ class ResumePermission(BasePermission):
         if not user.is_authenticated:
             return False
 
-        role_perms = user.role.permisssions.values_list('codename', flat=True)
+        role_perms = user.role.permissions.values_list('codename', flat=True)
 
         if request.method in SAFE_METHODS:
             return "view_resume" in role_perms

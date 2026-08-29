@@ -10,21 +10,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["username", "password"]
 
     def create(self, validated_data):
+        role, created = Role.objects.get_or_create(name="candidate", defaults={'description':'Candidate can CRUD resume'})
+
+        view_resume = Permission.objects.get(codename='view_resume')
+        add_resume = Permission.objects.get(codename='add_resume')
+        delete_resume = Permission.objects.get(codename='delete_resume')
+        change_resume = Permission.objects.get(codename='change_resume')
+        role.permissions.set([view_resume, add_resume, delete_resume, change_resume])
+
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
+            role=role,
         )
 
-        role, created = Role.objects.get_or_create(name=validated_data['candidate'])
-
-        if created:
-            role.description = 'Candidate can CRUD resume'
-            role.save()
-            view_resume = Permission.objects.get(codename='view_resume')
-            add_resume = Permission.objects.get(codename='add_resume')
-            delete_resume = Permission.objects.get(codename='delete_resume')
-            change_resume = Permission.objects.get(codename='change_resume')
-            role.permissions.set([view_resume, add_resume, delete_resume, change_resume])
-        user.role = role
-        user.save()
         return user
