@@ -6,6 +6,37 @@ from django.db import migrations
 def create_roles(apps, schema_editor):
     Role = apps.get_model("users", "Role")
     Permission = apps.get_model("auth", "Permission")
+    ContentType = apps.get_model("contenttypes", "ContentType")
+    Resume = apps.get_model("resumes", "Resume")
+
+    content_type, _ = ContentType.objects.get_or_create(
+        app_label="resumes",
+        model="resume",
+    )
+
+    view_resume, _ = Permission.objects.get_or_create(
+        codename="view_resume",
+        content_type=content_type,
+        defaults={"name": "Can view resume"},
+    )
+
+    add_resume, _ = Permission.objects.get_or_create(
+        codename="add_resume",
+        content_type=content_type,
+        defaults={"name": "Can add resume"},
+    )
+
+    change_resume, _ = Permission.objects.get_or_create(
+        codename="change_resume",
+        content_type=content_type,
+        defaults={"name": "Can change resume"},
+    )
+
+    delete_resume, _ = Permission.objects.get_or_create(
+        codename="delete_resume",
+        content_type=content_type,
+        defaults={"name": "Can delete resume"},
+    )
 
     candidate, _ = Role.objects.get_or_create(
         name="candidate",
@@ -21,11 +52,6 @@ def create_roles(apps, schema_editor):
         name="admin",
         defaults={"description": "Admin can CRUD all resumes"},
     )
-
-    view_resume = Permission.objects.get(codename="view_resume")
-    add_resume = Permission.objects.get(codename="add_resume")
-    change_resume = Permission.objects.get(codename="change_resume")
-    delete_resume = Permission.objects.get(codename="delete_resume")
 
     candidate.permissions.set([
         view_resume,
@@ -51,6 +77,8 @@ class Migration(migrations.Migration):
     dependencies = [
         ("users", "0002_alter_user_role"),
         ("resumes", "0002_initial"),
+        ("contenttypes", "0002_remove_content_type_name"),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
