@@ -70,6 +70,12 @@ def create_roles(apps, schema_editor):
         delete_resume,
     ])
 
+def delete_roles(apps, schema_editor):
+    Role = apps.get_model("users", "Role")
+
+    Role.objects.filter(
+        name__in=["candidate", "hr", "admin"]
+    ).delete()
 
 class Migration(migrations.Migration):
 
@@ -81,5 +87,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_roles),
+        migrations.RunPython(
+            create_roles,
+            reverse_code=delete_roles,
+        ),
     ]
