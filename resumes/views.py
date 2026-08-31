@@ -10,8 +10,8 @@ class ResumeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.role.name == 'candidate':
-            return Resume.objects.filter(user=self.request.user)
-        return Resume.objects.all()
+            return Resume.objects.filter(user=self.request.user).order_by('-created_at')
+        return Resume.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

@@ -7,7 +7,6 @@ def create_roles(apps, schema_editor):
     Role = apps.get_model("users", "Role")
     Permission = apps.get_model("auth", "Permission")
     ContentType = apps.get_model("contenttypes", "ContentType")
-    Resume = apps.get_model("resumes", "Resume")
 
     content_type, _ = ContentType.objects.get_or_create(
         app_label="resumes",
